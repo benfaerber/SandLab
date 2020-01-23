@@ -53,6 +53,16 @@ public class SandLab
    grid[row][col] = tool;
   }
 
+  public Color modColor(int r, int g, int b)
+  {
+	  if (r != 0)
+		  r += (int) (Math.random()*(5)) - 3;
+	  if (g != 0)
+		  g += (int) (Math.random()*(5)) - 3;
+	  if (b != 0)
+		  b += (int) (Math.random()*(5)) - 3;
+	  return new Color(r, g, b);
+  }
   //copies each element of grid into the display
   public void updateDisplay()
   {
@@ -61,13 +71,35 @@ public class SandLab
 	  {
 		  for (int j = 0; j < grid[i].length; j++)
 		  {
+			  int point = grid[i][j];
 			  Color c = null;
-			  if (grid[i][j] == EMPTY)
-				  c = Color.black;
-			  else if (grid[i][j] == METAL)
-				  c = Color.GRAY;
-			  else if (grid[i][j] == SAND)
-				  c = Color.yellow;
+			  switch (point)
+			  {
+			  case EMPTY:
+				  c = new Color(186, 249, 252);
+				  break;
+			  case METAL:
+				  c = modColor(130, 130, 130);
+				  break;
+			  case SAND:
+				  c = modColor(147, 86, 0);
+				  break;
+			  case WATER:
+				  c = modColor(0, 121, 173);
+				  break;
+			  case TREE:
+				  c = modColor(91, 52, 0);
+				  break;
+			  case LEAF:
+				  c = modColor(9, 130, 25);
+				  break;
+			  case BEEHIVE:
+				  c =  modColor(204, 193, 0);
+				  break;
+			  case BEE:
+				  c = modColor(204, 193, 100);
+				  break;
+			  }
 			  display.setColor(i, j, c);
 		  }
 	  }
@@ -90,12 +122,157 @@ public class SandLab
     int point = grid[y][x];
     if (point == SAND && y <= rows-2)
     {
-    	if (grid[y+1][x] == EMPTY)
+    	if (grid[y+1][x] == EMPTY || grid[y+1][x] == WATER)
     	{
+    		int temp = grid[y+1][x];
     		grid[y+1][x] = SAND;
+    		grid[y][x] = temp;
+    	}
+    }
+    
+    if (point == WATER && y <= rows-2)
+    {
+    	int direction = (int) (Math.random()*(3)) - 1;
+    	if (x+direction >= 0 && x+direction < cols)
+    	{
+        	int check = grid[y+1][x+direction];
+        	if (check == EMPTY)
+        	{
+        		grid[y][x] = EMPTY;
+        		grid[y+1][x+direction] = WATER;
+        	}
+        	else if (grid[y][x+direction] == EMPTY)
+        	{
+        		grid[y][x] = EMPTY;
+        		grid[y][x+direction] = WATER;
+        	}
+    	}
+    	
+    }
+    
+    if (point == TREE && y <= rows-2 && y != 0)
+    {
+    	if (treeHeight(x, y) > 3)
+    	{
+    		if (x != 0 && (int) (Math.random()*(10)) == 5)
+    			grid[y][x-1] = LEAF;
+    		if (x < grid.length-2 && (int) (Math.random()*(10)) == 5)
+    			grid[y][x+1] = LEAF;
+    	}
+    	
+    	if (grid[y+1][x] == SAND || grid[y+1][x] == TREE)
+    	{
+    		if ((int) (Math.random()*(10)) == 5 && grid[y-1][x] == EMPTY)
+    		{
+    			if (treeHeight(x, y) < 7)
+    				grid[y-1][x] = TREE;
+    			else if (treeHeight(x, y) == 7)
+    				grid[y-1][x] = LEAF;
+    		}
+    	}
+    	else
+    	{
     		grid[y][x] = EMPTY;
     	}
     }
+    else if (point == TREE)
+    {
+    	grid[y][x] = EMPTY;
+    }
+    
+    if (point == LEAF && x > 0 && x < grid.length && y > 0 && y < grid.length-2)
+    {
+    	if (grid[y][x-1] == EMPTY && (int) (Math.random()*(100)) == 5)
+		{
+    		if (blockCount(BEEHIVE) == 0)
+    			grid[y][x-1] = BEEHIVE;
+		}
+    }
+    
+    if (point == BEEHIVE && x > 0 && x < grid.length && y > 0 && y < grid.length-2)
+    {
+    	if (grid[y][x-1] == LEAF || grid[y][x+1] == LEAF)
+    	{
+    		if ((int) (Math.random()*(100)) == 5 && blockCount(BEE) < 10 && grid[y][x-1] == EMPTY)
+    		{
+    			grid[y][x-1] = BEE;
+    		}
+	    		
+    	}
+    	else
+    	{
+    		grid[y][x] = EMPTY;
+    	}
+    }
+    
+    if (point == BEE)
+    {
+    	int dire = (int) (Math.random()*(5));
+    	System.out.println(dire);
+    	if (y > 0 && dire == 0)
+    	{
+    		if (grid[y-1][x] == EMPTY)
+    		{
+    			grid[y-1][x] = BEE;
+    			grid[y][x] = EMPTY;
+    		}
+    	}
+    		
+    	if (y < grid.length-2 && dire == 1)
+    	{
+    		if (grid[y+1][x] == EMPTY)
+    		{
+    			grid[y+1][x] = BEE;
+    			grid[y][x] = EMPTY;
+    		}
+    	}
+    	
+    	if (x > 0 && dire == 2)
+    	{
+    		if (grid[y][x-1] == EMPTY)
+    		{
+    			grid[y][x-1] = BEE;
+    			grid[y][x] = EMPTY;
+    		}
+    	}
+    	
+    	if (x < grid.length-2 && dire == 3)
+    	{
+    		if (grid[y][x+1] == EMPTY)
+    		{
+    			grid[y][x+1] = BEE;
+    			grid[y][x] = EMPTY;
+    		}
+    	}
+    		
+    }
+  }
+  
+  public int treeHeight(int x, int y)
+  {
+	  int treeCount = 0;
+	  for (int i = y; y < grid.length-1; i++)
+	  {
+		  if (grid[i][x] == TREE)
+			  treeCount++;
+		  else
+			  break;
+	  }
+	  return treeCount;
+  }
+  
+  public int blockCount(int block)
+  {
+	  int count = 0;
+	  for (int i = 0; i < grid.length; i++)
+	  {
+		  for (int j = 0; j < grid[i].length; j++)
+		  {
+			  if (grid[i][j] == block)
+				  count++;
+		  }
+	  }
+	  return count;
   }
   
   //do not modify this method!
