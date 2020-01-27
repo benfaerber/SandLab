@@ -73,6 +73,7 @@ public class SandLab
    grid[row][col] = tool;
   }
 
+  // Adds a random offset to colors
   private Color modColor(int r, int g, int b)
   {
 	  int mr = r;
@@ -95,17 +96,20 @@ public class SandLab
 	  return new Color(mr, mg, mb);
   }
   
+  // Creates a gradient based on a y value
   private Color gradient(int r, int g, int b, int y)
   {
 	  r -= (y*4f)-10;
 	  return new Color(r, g, b);
   }
   
+  // Creates a color that would look good in an explosion
   private Color randomCloudColor()
   {
 	  return new Color(255, random(155), 0);
   }
   
+  // Gets a random int between 0 and range
   private int random(int range)
   {
 	  return (int) (Math.random()*(range));
@@ -224,9 +228,9 @@ public class SandLab
         	grid[y][x] = EMPTY;
         }
         
-        if (point == LEAF && x > 0 && x < grid.length && y > 0)
+        if (point == LEAF)
         {
-        	if (grid[y][x-1] == EMPTY && random(100) == 5)
+        	if (x > 0 && x < grid.length && y > 0 && grid[y][x-1] == EMPTY && random(100) == 5)
     		{
         		if (blockCount(BEEHIVE) == 0)
         			grid[y][x-1] = BEEHIVE;
@@ -293,7 +297,7 @@ public class SandLab
         	}
         }
         
-        if (point == NUKE)
+        if (point == NUKE && y <= grid.length-2)
         {
         	if (grid[y+1][x] == EMPTY)
         	{
