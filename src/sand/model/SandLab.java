@@ -115,6 +115,7 @@ public class SandLab
 	  return (int) (Math.random()*(range));
   }
   
+  // Swaps 2 blocks at 2 coordinantes
   private void swap(int x1, int y1, int x2, int y2)
   {
 	  int temp = grid[y1][x1];
@@ -303,7 +304,7 @@ public class SandLab
         	{
         		swap(x, y, x, y+1);
         	}
-        	else
+        	else if (grid[y+1][x] != NUKE)
         	{
         		explosion(x, y);
         		mushroomCloud(x,y);
