@@ -54,6 +54,15 @@ public class SandLab
     //1. Add code to initialize the data member grid with same dimensions
     this.grid = new int[numRows][numCols];
     
+    // Propagates the floor with sand
+    for (int i = 0; i < grid.length; i++)
+	{
+		for (int j = 1; j < 10; j++)
+		{
+			grid[grid.length-j][i] = SAND;
+		}
+	}
+    
     display = new SandDisplay("Falling Sand", numRows, numCols, names);
   }
   
@@ -109,10 +118,6 @@ public class SandLab
 	  grid[y2][x2] = temp;
   }
   
-  public boolean inBounds(int x, int y)
-  {
-	  return x >= 0 && x < grid.length && y >= 0 && y < grid.length;
-  }
   //copies each element of grid into the display
   public void updateDisplay()
   {
@@ -420,18 +425,9 @@ public class SandLab
   }
   
   //do not modify this method!
-  // I DO WHAT I WANT - BEN
   public void run()
   {
-	for (int i = 0; i < grid.length; i++)
-	{
-		for (int j = 1; j < 10; j++)
-		{
-			grid[grid.length-j][i] = SAND;
-		}
-	}
-	  
-    while (true) // infinite loop
+	while (true) // infinite loop
     {
       for (int i = 0; i < display.getSpeed(); i++)
       {
